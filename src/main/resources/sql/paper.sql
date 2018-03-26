@@ -23,14 +23,12 @@ DROP TABLE IF EXISTS `category`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `category` (
-  `id` int(11) NOT NULL,
-  `parent_id` int(11) NOT NULL,
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `parent_id` BIGINT NOT NULL,
   `category` varchar(256) NOT NULL,
   `catrgory_name` varchar(256) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_category_1_idx` (`parent_id`),
-  CONSTRAINT `fk_category_1` FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -50,9 +48,9 @@ DROP TABLE IF EXISTS `code`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `code` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `paper_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `paper_id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
   `author` varchar(256) DEFAULT NULL,
   `path` varchar(45) NOT NULL,
   `comments` text NOT NULL,
@@ -60,9 +58,9 @@ CREATE TABLE `code` (
   PRIMARY KEY (`id`),
   KEY `fk_code_1_idx` (`paper_id`),
   KEY `fk_code_2_idx` (`user_id`),
-  CONSTRAINT `fk_code_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_code_1` FOREIGN KEY (`paper_id`) REFERENCES `paper` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  CONSTRAINT `fk_code_1` FOREIGN KEY (`paper_id`) REFERENCES `paper` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_code_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,9 +80,9 @@ DROP TABLE IF EXISTS `comments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `comments` (
-  `id` int(11) NOT NULL,
-  `paper_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `id` BIGINT NOT NULL,
+  `paper_id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
   `comments` text NOT NULL,
   `time` date NOT NULL,
   `flag` int(11) NOT NULL,
@@ -93,7 +91,7 @@ CREATE TABLE `comments` (
   KEY `fk_comments_2_idx` (`user_id`),
   CONSTRAINT `fk_comments_1` FOREIGN KEY (`paper_id`) REFERENCES `paper` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_comments_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,9 +111,9 @@ DROP TABLE IF EXISTS `history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `history` (
-  `id` int(11) NOT NULL,
-  `paper_id` int(11) DEFAULT NULL,
-  `user_id` int(11) NOT NULL,
+  `id` BIGINT NOT NULL,
+  `paper_id` BIGINT DEFAULT NULL,
+  `user_id` BIGINT NOT NULL,
   `operation` varchar(256) DEFAULT NULL,
   `time` date DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -123,7 +121,7 @@ CREATE TABLE `history` (
   KEY `fk_history_2_idx` (`user_id`),
   CONSTRAINT `fk_history_1` FOREIGN KEY (`paper_id`) REFERENCES `paper` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_history_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,19 +141,20 @@ DROP TABLE IF EXISTS `paper`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `paper` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
   `title` varchar(256) NOT NULL,
-  `abstract` text NOT NULL,
+  `summary` text NOT NULL,
   `path` varchar(256) NOT NULL,
   `tag` varchar(256) NOT NULL,
   `author` varchar(45) NOT NULL,
   `download_time` int(11) NOT NULL DEFAULT '0',
-  `category_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `category_id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
   `year` date NOT NULL,
   `create_time` date NOT NULL,
-  `delete_user_id` int(11) NOT NULL,
+  `delete_user_id` BIGINT NOT NULL,
   `delete_time` date NOT NULL,
+  `rank` int(11) NOT NULL DEFAULT '3',
   `flag` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `fk_paper_1_idx` (`user_id`),
@@ -164,7 +163,7 @@ CREATE TABLE `paper` (
   CONSTRAINT `fk_paper_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_paper_2` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_paper_3` FOREIGN KEY (`delete_user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,9 +183,9 @@ DROP TABLE IF EXISTS `rank`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `rank` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `paper_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `paper_id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
   `rank` int(11) NOT NULL,
   `time` date NOT NULL,
   PRIMARY KEY (`id`),
@@ -194,7 +193,7 @@ CREATE TABLE `rank` (
   KEY `fk_rank_2_idx` (`user_id`),
   CONSTRAINT `fk_rank_1` FOREIGN KEY (`paper_id`) REFERENCES `paper` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_rank_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,15 +213,15 @@ DROP TABLE IF EXISTS `subscribe`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `subscribe` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `paper_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `paper_id` BIGINT NOT NULL,
+  `user_id` BIGINT NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_subscribe_1_idx` (`paper_id`),
   KEY `fk_subscribe_2_idx` (`user_id`),
   CONSTRAINT `fk_subscribe_1` FOREIGN KEY (`paper_id`) REFERENCES `paper` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_subscribe_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -242,12 +241,13 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
   `username` varchar(45) NOT NULL,
   `email` varchar(256) NOT NULL,
-  `else` text NOT NULL,
+  `remarks` text NOT NULL,
+  `role` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -268,4 +268,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-23 18:09:44
+-- Dump completed on 2018-03-26 12:19:27
