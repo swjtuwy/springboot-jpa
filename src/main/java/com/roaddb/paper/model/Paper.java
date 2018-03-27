@@ -35,6 +35,9 @@ public class Paper implements Serializable, Persistable<Long> {
     @Column(name = "path")
     private String path;
 
+    @Column(name = "filename")
+    private String filename;
+
     @Column(name = "tag")
     private String tag;
 
@@ -116,6 +119,14 @@ public class Paper implements Serializable, Persistable<Long> {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public String getTag() {

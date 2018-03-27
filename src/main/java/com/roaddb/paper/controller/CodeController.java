@@ -1,5 +1,6 @@
 package com.roaddb.paper.controller;
 
+import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +11,12 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.roaddb.paper.model.Code;
 import com.roaddb.paper.exception.InnerException;
+import com.roaddb.paper.model.Code;
 import com.roaddb.paper.model.Paper;
 import com.roaddb.paper.repository.CodeRepository;
 import com.roaddb.paper.repository.PaperRepository;
+import com.roaddb.paper.util.Tool;
 
 @Component
 public class CodeController {
@@ -35,7 +37,7 @@ public class CodeController {
      * Add codes.
      */
     @Transactional
-    public void addCode(Long paperId, List<MultipartFile> codeFiles) throws Exception {
+    public boolean addCode(Long paperId, List<MultipartFile> codeFiles) throws Exception {
         Paper paper = paperRepository.findOne(paperId);
         if (paper == null) {
             throw new InnerException(400, "paper not exist");
@@ -52,14 +54,21 @@ public class CodeController {
                 codeRepository.save(codeModel);
             }
         }
+        return true;
     }
 
     @Transactional
-    public void deleteCode(List<Long> ids) {
+    public boolean deleteCode(List<Long> ids) throws Exception {
         if (!CollectionUtils.isEmpty(ids)) {
             for (Long id : ids) {
+                Code code = codeRepository.findOne(id);
+                if (code == null) {
+                    throw new InnerException(400, "delete code failed.");
+                }
+                Tool.delFile(basePath + File.separator + code.getPath());
                 codeRepository.delete(id);
             }
         }
+        return true;
     }
 }

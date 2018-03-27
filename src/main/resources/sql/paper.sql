@@ -145,6 +145,7 @@ CREATE TABLE `paper` (
   `title` varchar(256) NOT NULL,
   `summary` text NOT NULL,
   `path` varchar(256) NOT NULL,
+  `filename` varchar(256) NOT NULL,
   `tag` varchar(256) NOT NULL,
   `author` varchar(45) NOT NULL,
   `download_time` int(11) NOT NULL DEFAULT '0',
