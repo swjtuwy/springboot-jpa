@@ -1,0 +1,21 @@
+2. Create Paper Record
+
+Service：/paper
+Request: {user:xxx, author:xxx, summary: xxx, tag: [xxx], sourceCode:[xxx,xxx], file: xxx}
+
+Response:{returnCode:xxx,title:xxx, user:xxx, author:xxx,
+ summary: xxx, tag: [], sourceCode:[xxx,xxx], file: xxx,create:xxx, ranking:xxx}
+
+3. Get Paper Record
+
+Service：/paper
+Request: {paperID:""}
+Response:{returnCode:xxx, title:xxx, user:xxx, author:xxx, summary: xxx, key: xxx, code:xxx, file: xxx, ranking:xxx}
+
+4. Update Paper Record
+
+Service：/paper
+Request: {paperID:"", user:xxx, author:xxx, summary: xxx, tag: [], sourceCode:xxx, file: xxx}
+Response:{returnCode:xxx, user:xxx, author:xxx, summary: xxx, tag: [], code:xxx, file: xxx}
+
+title不能被其他普通用户修改。

@@ -2,8 +2,17 @@ server.port: 10000
 
 server.contextPath: /test
 
-
 #spring.jpa.hibernate.ddl-auto: create
 spring.datasource.url: jdbc:mysql://localhost:3306/test
 spring.datasource.username: root
 spring.datasource.password: root
+
+spring.http.multipart.max-file-size: 1024MB
+spring.http.multipart.max-request-size: 1024MB
+
+upload.file.path: /home/test/Documents/paper
+
+#mail
+workflowmanger.bpmn.smtphost: 10.69.0.123
+workflowmanger.bpmn.smtpport: 25
+workflowmanger.bpmn.emailfrom: roadDB_robot@ygomi.com

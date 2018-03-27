@@ -3,6 +3,7 @@ package com.roaddb.paper.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -16,29 +17,29 @@ import com.roaddb.paper.repository.CodeRepository;
 import com.roaddb.paper.repository.PaperRepository;
 
 @Component
-public class PaperController {
+public class CodeController {
 
-    @Autowired
-    PaperRepository paperRepository;
+    @Value("${upload.file.path}")
+    String basePath;
 
     @Autowired
     CodeRepository codeRepository;
 
     @Autowired
+    PaperRepository paperRepository;
+
+    @Autowired
     UploadController uploadController;
 
     /**
-     *  add paper.
+     * Add codes.
      */
     @Transactional
-    public long addPaper(Paper paper, MultipartFile paperFile, List<MultipartFile> codeFiles) throws Exception {
-        String paperPath = uploadController.uploadFile(true, paperFile);
-        if (StringUtils.isEmpty(paperPath)) {
-            String paperMsg = paperFile.getOriginalFilename() + "upload failed.";
-            throw new InnerException(400,paperMsg);
+    public void addCode(Long paperId, List<MultipartFile> codeFiles) throws Exception {
+        Paper paper = paperRepository.findOne(paperId);
+        if (paper == null) {
+            throw new InnerException(400, "paper not exist");
         }
-        paper.setPath(paperPath);
-        Paper result = paperRepository.save(paper);
         if (!CollectionUtils.isEmpty(codeFiles)) {
             for (MultipartFile code : codeFiles) {
                 String codePath = uploadController.uploadFile(false, code);
@@ -47,12 +48,18 @@ public class PaperController {
                     throw new InnerException(400, codeMsg);
                 }
                 Code codeModel = new Code();
-                codeModel.setPaper(result);
+                codeModel.setPaper(paper);
                 codeRepository.save(codeModel);
             }
         }
-        return result.getId();
     }
 
-
+    @Transactional
+    public void deleteCode(List<Long> ids) {
+        if (!CollectionUtils.isEmpty(ids)) {
+            for (Long id : ids) {
+                codeRepository.delete(id);
+            }
+        }
+    }
 }

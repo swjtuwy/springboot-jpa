@@ -1,5 +1,8 @@
 package com.roaddb.paper.result;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,14 +12,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.roaddb.paper.model.Category;
 import com.roaddb.paper.repository.CategoryRepository;
@@ -28,9 +34,6 @@ public class ResultApi {
 
     @Autowired
     CategoryRepository categoryRepository;
-
-    @Autowired
-    Tool tool;
 
 
     @GetMapping(value = "delRootCate")
@@ -103,8 +106,7 @@ public class ResultApi {
      *  upload.
      */
     @RequestMapping(value = "/uploadimg", method = RequestMethod.POST)
-    public @ResponseBody String uploadImg(@RequestParam("file") MultipartFile file,
-                     HttpServletRequest request) {
+    public @ResponseBody String uploadImg(@RequestParam("file") MultipartFile file) {
 
         String contentType = file.getContentType();   //图片文件类型
         String fileName = file.getOriginalFilename();  //图片名字
@@ -123,5 +125,43 @@ public class ResultApi {
         return filePath;
     }
 
+    //    @RequestMapping(value = "/paper", method = RequestMethod.POST)
+    //    public ResponseEntity<String> addPaper(@RequestBody Object body){
+    //
+    //  }
+
+    /**
+     *
+     */
+    @RequestMapping(value = "/batch/upload", method = RequestMethod.POST)
+    @ResponseBody
+    public String handleFileUpload(HttpServletRequest request) {
+        List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("file");
+        List<MultipartFile> file2 = ((MultipartHttpServletRequest) request).getFiles("file2");
+
+        MultipartFile file = null;
+        BufferedOutputStream stream = null;
+        for (int i = 0; i < files.size(); ++i) {
+            file = files.get(i);
+            if (!file.isEmpty()) {
+                try {
+                    byte[] bytes = file.getBytes();
+                    stream = new BufferedOutputStream(new FileOutputStream(
+                            new File(file.getOriginalFilename())));
+                    stream.write(bytes);
+                    stream.close();
+
+                } catch (Exception e) {
+                    stream = null;
+                    return "You failed to upload " + i + " => "
+                            + e.getMessage();
+                }
+            } else {
+                return "You failed to upload " + i
+                        + " because the file was empty.";
+            }
+        }
+        return "upload successful";
+    }
 
 }
