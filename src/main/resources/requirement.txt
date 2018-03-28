@@ -1,21 +1,204 @@
-2. Create Paper Record
 
+刚才review过后的结果。看是否还有什么遗漏。
+
+
+王宇，麻烦录入一下swagger。
+
+
+说明：当数据请求出错时，返回的结果：{msg:xxx}. 前端将信息显示在界面上。
+
+
+1. Create Paper Record
+创建一个新的paper。
 Service：/paper
-Request: {user:xxx, author:xxx, summary: xxx, tag: [xxx], sourceCode:[xxx,xxx], file: xxx}
+Request: {user:xxx, author:xxx, summary: xxx, tag: [xxx], file: xxx, year:xxx, categoryID:xxx, rank:xxx}
 
-Response:{returnCode:xxx,title:xxx, user:xxx, author:xxx,
- summary: xxx, tag: [], sourceCode:[xxx,xxx], file: xxx,create:xxx, ranking:xxx}
 
-3. Get Paper Record
+Response:{code:xxx,data: {paperID:xxx}}
 
-Service：/paper
+
+2. Get Paper Record
+根据id得到一个paper的详细信息。
+Service：/papers/paperID
 Request: {paperID:""}
-Response:{returnCode:xxx, title:xxx, user:xxx, author:xxx, summary: xxx, key: xxx, code:xxx, file: xxx, ranking:xxx}
+Response:{title:xxx, user:xxx, author:xxx, summary: xxx, tag: [], attachment:[{id:xxx, url:xxx, size:xxx, name:xxx}], fileUrl: xxx, rank:xxx, category:[{}]}
 
-4. Update Paper Record
 
-Service：/paper
-Request: {paperID:"", user:xxx, author:xxx, summary: xxx, tag: [], sourceCode:xxx, file: xxx}
-Response:{returnCode:xxx, user:xxx, author:xxx, summary: xxx, tag: [], code:xxx, file: xxx}
+注：category结构未定
 
-title不能被其他普通用户修改。
+
+3. Update Paper Record
+更新paper相关的属性，title不能被其他普通用户修改。源码的上传接口另有接口单独实现。
+Service：/paper/paperID
+Request: {author:xxx, summary: xxx, tag: [], title:xxx, year:xxx, rank:xxx, category:[id1, id]}
+Response: httpcode 200/400/500
+
+
+4. Delete Paper Record
+删除一条已存在的paper。并将对应的信息一同删除。
+Service：paper/paperID
+Request: {paperID:""}
+Response: httpcode 200/400/500
+
+
+5. Update paper file 
+更新已上传的paper file
+Service: paper/paperID/file
+Request: {file:xxx}
+Response: {fileUrl:xxx}
+
+
+6. Create attachment
+用于提交新的source code压缩包，或文件，关联到对应的paper上。
+Service: /attachment/
+Request: {paperID:xxx, attachment:xxx}
+Response: {attachmentUrl:[{id:xxx, url:xxx, size:xxx, name:xxx}]}
+
+
+7. Delete attachment file 
+删除已上传的paper相关的源码文件。
+Service: /attachment/attachmentID
+Request: {id: xxx}
+Response: {code:xxx，msg:xxx}
+
+
+8. Revert Record
+Service: /paper/paperID/revert
+
+
+本质上就是update，更新对应的flag字段即可,恢复已删除的文件。
+
+
+9. Download Files
+下载paper，需要后端将pdf封装为zip包，一起下载。
+Service: /papers/download
+Request: {paperID:[id1, id2]}
+Response: {fileUrl:"xxx"}
+
+
+10. Create Category
+创建类别信息。
+Service: /category
+Request:{parentID:xxx, name:xxx}
+
+
+Response:{categoryID: xxx}
+
+
+11. Category list
+列出类别信息/
+Service: /category
+Request:[]
+
+
+Response:{[{ID:xxx, name:xxx, children:[{ID:xxx,name: xxx}]}]}
+
+
+12. Update Category
+更新类别信息
+Service: /category
+
+
+Request:{[{id:xxx, name:xxx}]}
+Response:
+
+
+13. Delete Category
+删除一个类别的信息。先决条件，1. 这个类别下边没有paper。2. 没有子节点。
+Service: /category/id
+Request: id
+Response:
+
+
+14. Search
+查找功能，支持一种或者多种条件的组合查询。key代表输入的关键字。sortkey可以暂时先不支持。
+使用空格作为字符串分隔。
+Service /papers
+Request: {"title":xxx, "author":xxxx, "tag":xxx, key:xxx, sortKey:xxx，categoryID:[], start:xxx, limit:xxx， year:xxx}
+Response:{data:[{user:xxx, author:xxx, summary: xxx, key: xxx}], total:xxx }
+
+
+15. Add Comments
+为指定的paper添加评论
+Service: /comments
+Request: {paperID:xxx, content:xxx, user:xxx, refCommentID:xxx}
+Response: {commentID:xxx}
+
+
+16. Display Comments
+显示paper对应的所有评论。需要支持分页。
+Service: /comment
+Request: {paperID:xxx,start:xxx, limit:xxx}
+Response: {data:[{commentID:xxx,refCommentID:xxx, content:xxx, userID:xxx, create:xxxx, update:xxxx}], total:xxx}
+
+
+17. Update Comments
+更新评论，只能更新评论内容,只能自己更新自己的。
+Service: /comment/commentID
+Request: {content:xxx}
+Response: { [{content:xxx, update:xxxx}]}
+
+
+18. Delete Comment
+删除评论。
+Service: /comment/commentID
+Request: {commentID:xxx}
+Response:
+
+
+19. Get Logs
+获取当前paper的操作日志。
+Service: /logs/paperID
+Request:
+Response:{data:[{create:xxxx, event:xxx, description:xxx, user:xxx}]}
+
+
+
+
+20. Create Subscription
+创建订阅。
+Service: /subscription
+Request: {paperID:xxx}
+Response:
+
+
+
+
+21. Delete Subscription
+删除订阅
+Service: /subscription
+Request:{paperID:[]}
+Response:{}
+
+
+
+
+22. Comments
+在用户中心列出当前用户所有的paper对应的评价。点击paper 的title，直接跳转到对应的paper。
+按时间从新到旧。
+Service: /usercenter/comments
+Request:{start:xxx, limit:xxx}
+Response:{ data:[{content:xxx, paperID:xxx, title:xxx}], total:xxx}
+
+
+23. Subscription List
+在用户中心列出当前用户所有订阅的信息。
+Service: /usercenter/subscription
+Request:
+Response:{data: [{paperID:xxx, paperTitle:xxx}]}
+
+
+24. Rank
+用户对于文章的打分。
+Service:/rank
+Request: {paperID:xxx, userRanking:xxx}
+Response:{}
+
+
+26. Update user
+Service: /user
+Request:{role:xxx}
+Response{}
+
+
+

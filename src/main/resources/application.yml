@@ -1,9 +1,9 @@
+### default config ###
 server.port: 10000
 
 server.contextPath: /test
 
-logging.config: classpath:config/logback.xml
-logging.file: /home/test/Documents/log/paper.log
+#logging.config: classpath:config/logback.xml
 
 #spring.jpa.hibernate.ddl-auto: create
 spring.datasource.url: jdbc:mysql://localhost:3306/test
@@ -17,6 +17,11 @@ upload.file.path: /home/test/Documents/paper
 download.file.path: /home/test/Documents/paper/download/
 
 #mail
-workflowmanger.bpmn.smtphost: 10.69.0.123
-workflowmanger.bpmn.smtpport: 25
-workflowmanger.bpmn.emailfrom: roadDB_robot@ygomi.com
+paper.smtphost: 10.69.0.123
+paper.smtpport: 25
+paper.emailfrom: roadDB_robot@ygomi.com
+
+### production config ###
+---
+spring.profiles: production
+#logging.file: /home/test/Documents/log/paper.log

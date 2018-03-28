@@ -58,7 +58,7 @@ public class EmailController {
         logger.info("+sendResultByEmail+");
 
         String emailSubject = String.format("the %s paper modify by % ", paper.getTitle(), user.getUserName());
-        String emailText = "Hi,\r\n \r\n The Serialize data processing is successful.";
+        String emailText = "Hi,\r\n" + emailSubject + "\r\n ";
 
         if (!CollectionUtils.isEmpty(userSet)) {
             for (User innerUser : userSet) {
@@ -83,8 +83,10 @@ public class EmailController {
         String host = smtpServerHost;
         String port = smtpServerPort;
         Properties properties = System.getProperties();
-        properties.setProperty("mail.smtp.host", host);
-        properties.setProperty("mail.smtp.port", port);
+        properties.setProperty("mail.smtp.host", "10.69.0.123");
+        properties.setProperty("mail.smtp.port", "25");
+        //  properties.setProperty("mail.smtp.host", host);
+        //  properties.setProperty("mail.smtp.port", port);
         Session session = Session.getDefaultInstance(properties);
 
         try {
@@ -92,7 +94,7 @@ public class EmailController {
             MimeMessage message = new MimeMessage(session);
 
             // Set From: header field of the header.
-            message.setFrom(new InternetAddress(from));
+            message.setFrom(new InternetAddress("roadDB_robot@ygomi.com"));
 
             // Set To: header field of the header.
             // message.addRecipient(Message.RecipientType.TO, new
@@ -116,4 +118,8 @@ public class EmailController {
         return flag;
     }
 
+    public static void main(String[] args) {
+        EmailController emailController = new EmailController();
+        emailController.sendResultByEmailInner("yu.wang@ygomi.com", "test", "test");
+    }
 }

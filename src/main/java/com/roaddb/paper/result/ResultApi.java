@@ -9,12 +9,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.roaddb.paper.model.User;
+import com.roaddb.paper.repository.UserRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +34,8 @@ import com.roaddb.paper.util.Tool;
 @RestController
 public class ResultApi {
 
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     CategoryRepository categoryRepository;
@@ -100,6 +105,13 @@ public class ResultApi {
         System.out.println(parentRes.toString());
     }
 
+
+    @GetMapping(value = "/getemail/{email}/user")
+    public void getU(@PathVariable("email") String email) throws Exception {
+        List<User> us = userRepository.findByEmailLike(email);
+        JSONArray js = new JSONArray(us);
+        System.out.println(js.toString());
+    }
 
     /**
      *
